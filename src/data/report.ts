@@ -1,9 +1,11 @@
+import { v4 as uuid } from 'uuid'
+
 import { ReportType } from './report.type'
 
 export const data: Data = {
   report: [
     {
-      id: 'uuid1',
+      id: uuid(),
       source: 'Salary',
       amount: 7500,
       type: ReportType.INCOME,
@@ -11,7 +13,7 @@ export const data: Data = {
       updated_at: new Date()
     },
     {
-      id: 'uuid2',
+      id: uuid(),
       source: 'Youtube',
       amount: 2500,
       type: ReportType.INCOME,
@@ -19,7 +21,7 @@ export const data: Data = {
       updated_at: new Date()
     },
     {
-      id: 'uuid3',
+      id: uuid(),
       source: 'Food',
       amount: 500,
       type: ReportType.EXPENSE,
