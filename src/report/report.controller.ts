@@ -1,7 +1,19 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseEnumPipe,
+  ParseUUIDPipe,
+  Post,
+  Put
+} from '@nestjs/common'
 
 import { ReportType } from '~/data'
 
+import { CreateReportDto, UpdateReportDto } from './dto'
 import { ReportService } from './report.service'
 
 @Controller('reports/:type')
@@ -9,18 +21,21 @@ export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   private getReportType(type: string) {
-    return type === 'incomes' ? ReportType.INCOME : ReportType.EXPENSE
+    return type === 'income' ? ReportType.INCOME : ReportType.EXPENSE
   }
 
   @Get()
-  getAllReports(@Param('type') type: string) {
+  getAllReports(@Param('type', new ParseEnumPipe(ReportType)) type: string) {
     const reportType = this.getReportType(type)
 
     return this.reportService.getAllReports(reportType)
   }
 
   @Get(':id')
-  getReportById(@Param('type') type: string, @Param('id') id: string) {
+  getReportById(
+    @Param('type', new ParseEnumPipe(ReportType)) type: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ) {
     const reportType = this.getReportType(type)
 
     return this.reportService.getReportById(reportType, id)
@@ -28,8 +43,8 @@ export class ReportController {
 
   @Post()
   createReport(
-    @Body() { amount, source }: { amount: number; source: string },
-    @Param('type') type: string
+    @Body() { amount, source }: CreateReportDto,
+    @Param('type', new ParseEnumPipe(ReportType)) type: string
   ) {
     const reportType = this.getReportType(type)
 
@@ -38,9 +53,9 @@ export class ReportController {
 
   @Put(':id')
   updateReport(
-    @Param('type') type: string,
-    @Param('id') id: string,
-    @Body() body: { amount: number; source: string }
+    @Param('type', new ParseEnumPipe(ReportType)) type: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateReportDto
   ) {
     const reportType = this.getReportType(type)
 
@@ -49,7 +64,7 @@ export class ReportController {
 
   @HttpCode(204)
   @Delete(':id')
-  deleteReport(@Param('id') id: string) {
+  deleteReport(@Param('id', ParseUUIDPipe) id: string) {
     return this.reportService.deleteReport(id)
   }
 }
