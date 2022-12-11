@@ -13,7 +13,7 @@ import {
 
 import { ReportType } from '~/data'
 
-import { CreateReportDto, UpdateReportDto } from './dto'
+import { CreateReportDto, ReportResponseDto, UpdateReportDto } from './dto'
 import { ReportService } from './report.service'
 
 @Controller('reports/:type')
@@ -25,7 +25,7 @@ export class ReportController {
   }
 
   @Get()
-  getAllReports(@Param('type', new ParseEnumPipe(ReportType)) type: string) {
+  getAllReports(@Param('type', new ParseEnumPipe(ReportType)) type: string): ReportResponseDto[] {
     const reportType = this.getReportType(type)
 
     return this.reportService.getAllReports(reportType)
@@ -35,7 +35,7 @@ export class ReportController {
   getReportById(
     @Param('type', new ParseEnumPipe(ReportType)) type: string,
     @Param('id', ParseUUIDPipe) id: string
-  ) {
+  ): ReportResponseDto {
     const reportType = this.getReportType(type)
 
     return this.reportService.getReportById(reportType, id)
@@ -45,7 +45,7 @@ export class ReportController {
   createReport(
     @Body() { amount, source }: CreateReportDto,
     @Param('type', new ParseEnumPipe(ReportType)) type: string
-  ) {
+  ): ReportResponseDto {
     const reportType = this.getReportType(type)
 
     return this.reportService.createReport({ amount, source }, reportType)
@@ -56,7 +56,7 @@ export class ReportController {
     @Param('type', new ParseEnumPipe(ReportType)) type: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateReportDto
-  ) {
+  ): ReportResponseDto {
     const reportType = this.getReportType(type)
 
     return this.reportService.updateReport(body, id, reportType)

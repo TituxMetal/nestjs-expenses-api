@@ -3,6 +3,8 @@ import { v4 as uuid } from 'uuid'
 
 import { data, ReportType } from '~/data'
 
+import { ReportResponseDto } from './dto'
+
 interface CreateReport {
   amount: number
   source: string
@@ -15,15 +17,23 @@ interface UpdateReport {
 
 @Injectable()
 export class ReportService {
-  getAllReports(reportType: ReportType) {
-    return data.report.filter(({ type }) => type === reportType)
+  getAllReports(reportType: ReportType): ReportResponseDto[] {
+    const reports = data.report.filter(({ type }) => type === reportType)
+
+    return reports.map(report => new ReportResponseDto(report))
   }
 
-  getReportById(reportType: ReportType, reportId: string) {
-    return data.report.filter(({ type }) => type === reportType).find(({ id }) => id === reportId)
+  getReportById(reportType: ReportType, reportId: string): ReportResponseDto {
+    const report = data.report
+      .filter(({ type }) => type === reportType)
+      .find(({ id }) => id === reportId)
+
+    if (!report) return
+
+    return new ReportResponseDto(report)
   }
 
-  createReport({ amount, source }: CreateReport, type: ReportType) {
+  createReport({ amount, source }: CreateReport, type: ReportType): ReportResponseDto {
     const newReport = {
       id: uuid(),
       source,
@@ -34,10 +44,10 @@ export class ReportService {
     }
     data.report.push(newReport)
 
-    return newReport
+    return new ReportResponseDto(newReport)
   }
 
-  updateReport(payload: UpdateReport, reportId: string, reportType: ReportType) {
+  updateReport(payload: UpdateReport, reportId: string, reportType: ReportType): ReportResponseDto {
     const reportToUpdate = data.report
       .filter(({ type }) => type === reportType)
       .find(({ id }) => id === reportId)
@@ -48,7 +58,7 @@ export class ReportService {
 
     data.report[reportIndex] = { ...data.report[reportIndex], ...payload, updated_at: new Date() }
 
-    return data.report[reportIndex]
+    return new ReportResponseDto(data.report[reportIndex])
   }
 
   deleteReport(reportId: string) {
