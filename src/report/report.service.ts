@@ -3,9 +3,14 @@ import { v4 as uuid } from 'uuid'
 
 import { data, ReportType } from '~/data'
 
-interface Report {
+interface CreateReport {
   amount: number
   source: string
+}
+
+interface UpdateReport {
+  amount?: number
+  source?: string
 }
 
 @Injectable()
@@ -18,7 +23,7 @@ export class ReportService {
     return data.report.filter(({ type }) => type === reportType).find(({ id }) => id === reportId)
   }
 
-  createReport({ amount, source }: Report, type: ReportType) {
+  createReport({ amount, source }: CreateReport, type: ReportType) {
     const newReport = {
       id: uuid(),
       source,
@@ -32,7 +37,7 @@ export class ReportService {
     return newReport
   }
 
-  updateReport(payload: Report, reportId: string, reportType: ReportType) {
+  updateReport(payload: UpdateReport, reportId: string, reportType: ReportType) {
     const reportToUpdate = data.report
       .filter(({ type }) => type === reportType)
       .find(({ id }) => id === reportId)
