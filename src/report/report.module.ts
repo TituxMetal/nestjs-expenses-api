@@ -12,6 +12,7 @@ import { ReportService } from './report.service'
       useClass: ClassSerializerInterceptor
     }
   ],
-  controllers: [ReportController]
+  controllers: [ReportController],
+  exports: [ReportService]
 })
 export class ReportModule {}
